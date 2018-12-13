@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>聊天室</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .wrap{
+            width: 900px;
+            height: 800px;
+            border: 1px solid black;
+            margin: 20px auto;
+            border-radius: 12px;
+            position: relative;
+        }
+        .wrap .main{
+            width: 600px;
+            height: 500px;
+            margin-top: 30px;
+            margin-left: 40px;
+            background: lightskyblue;
+            border: 1px solid gold; 
+            color: white;
+        }
+        .main ul li{
+            margin: 10px;
+            margin-left: 20px;
+            list-style: none;
+        }
+        .wrap .side{
+            width:200px;
+            height: 500px;
+            border: 1px solid gold; 
+            position: absolute;
+            top: 30px;
+            right: 40px;
+        }
+        .wrap ul{
+            margin: 0;
+            padding: 0;
+        }
+        .side div{
+            text-align: center;
+            background: red;
+            color: white;
+            height: 30px;
+            line-height: 30px;
+        }
+        .side ul li{
+            text-indent: 10px;
+            list-style: none;
+            text-align: left;
+            /* margin-top: 5px; */
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid gold;
+            color:white;
+            background: lightpink;
+        }
+        .wrap .tips{
+            position: absolute;
+            width: 340px;
+            text-align: center;
+            height: 60px;
+            line-height: 60px;
+            font-size: 20px;
+            font-weight: 700;
+            left: calc(50% - 170px);
+            top:300px;
+            background: lightgreen;
+            color: white;
+
+        }
+        .wrap .footer{
+            width: 820px;
+            height: 200px;
+            margin: 20px auto;
+            border: 1px solid gold; 
+            position: relative;
+        }
+        .footer textarea{
+            width: 560px;
+            height: 150px;
+            margin: 20px;
+            margin-left: 30px;
+        }
+        .footer div:first-of-type{
+            position: absolute;
+            width: 100px;
+            height: 30px;
+            background: lightgreen;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            top:40px;
+            right: 80px;
+        }
+        .footer div:last-of-type{
+            position: absolute;
+            width: 100px;
+            height: 30px;
+            background: lightgreen;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            top:100px;
+            right: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="wrap">
+            <div class="main">
+                <ul>
+                    <li v-for="item in contList">{{item}}</li>
+                </ul>
+            </div>
+            <div class="side">
+                <div>
+                    <span>请点击选择用户</span>
+                </div>
+                <ul>
+                    <li v-for="(item,index) in users" @click="click(index)">{{item}}</li>
+                </ul>
+                <div>
+                    <span>当前用户:</span>
+                    <span>{{user}}</span>
+                </div>
+            </div>
+            <div class="footer">
+                <textarea placeholder="请输入发言内容" v-model="text"></textarea>
+                <div @click="commit">
+                    <span>发送</span>
+                </div>
+                <div @click="revoke">
+                    <span>撤回</span>
+                </div>
+            </div>
+            <div v-if="onOFF" class="tips">
+                    <span v-text="tips"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        const vm = new Vue({
+            el:'#app',
+            data:{
+                user:"",
+                users:['张三', '李四', '王五','赵六'],
+                text:"",
+                contList:[],
+                onOFF:false,
+                tips:""
+                // chatList:[],
+            },
+            // computed:{
+            //     chatList(){
+            //         this.arr.push(this.user + this.text)
+            //         console.log(this.arr);
+            //         return this.arr
+            //     }
+            // },
+            methods:{
+                click(index){
+                    this.user = this.users[index]
+                },
+                commit(){
+                    if(this.user){
+                        this.onOFF = false;
+                        this.contList.push(this.user + " : " +this.text);
+                    }else if(this.text.trim()==""){
+                        this.onOFF = true;
+                        this.tips = "输入内容不能为空，请重新输入！"
+                        setTimeout(() => {
+                            this.onOFF = false;
+                        }, 2000);
+                    }else{
+                        this.onOFF = true;
+                        this.tips = "请选择用户再发送！"
+                        setTimeout(() => {
+                            this.onOFF = false;
+                        }, 2000);
+                    }                   
+                },
+                revoke(){
+                    this.contList.splice(this.contList.length-1,1)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
