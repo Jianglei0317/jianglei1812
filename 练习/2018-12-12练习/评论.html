@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>聊天室</title>
+    <title>评论</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <style>
         .wrap{
@@ -136,7 +136,7 @@
                 </div>
             </div>
             <div class="footer">
-                <textarea placeholder="请输入聊天内容" v-model="text"></textarea>
+                <textarea placeholder="请输入评论内容" v-model="text"></textarea>
                 <div @click="commit">
                     <span>发送</span>
                 </div>
@@ -174,18 +174,18 @@
                     }else if(this.text.trim()==""){
                         console.log(this.text);
                         this.onOFF = true;
-                        this.tips = "输入内容不能为空，请重新输入！"
+                        this.tips = "输入评论不能为空，请重新输入！"
                         setTimeout(() => {
                             this.onOFF = false;
                         }, 2000);
                     }else{
-                        this.contList.push(this.user + " : " +this.text);
+                        this.contList.push(this.user + ": " +this.text);
                     }                   
                 },
                 revoke(){
                     if(this.contList.length == 0){
                         this.onOFF = true;
-                        this.tips = "没有可撤回的消息！"
+                        this.tips = "没有可撤回的评论！"
                         setTimeout(() => {
                             this.onOFF = false;
                         }, 2000);
