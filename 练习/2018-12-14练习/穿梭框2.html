@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>穿梭框</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+         .wrap{
+            margin: 30px auto;
+            width: 370px;
+            height: 200px;        
+        }
+        .wrap ul{
+            margin: 0;
+            padding: 0;
+            width: inherit;
+            height: 162px;
+            overflow: auto;
+        }
+        .wrap ul li{
+            list-style: none;
+            text-indent: 10px;
+            margin: 10px;
+        }
+        .wrap ul li:hover{
+            background: #F3F3F3;
+        }
+        label:hover{
+            cursor: pointer;
+        }
+        .wrap .leftDiv,.rightDiv{
+            float: left;
+            width: 150px;
+            height: 200px;
+            border: 1px solid black;
+            border-radius: 8px;
+            
+        }
+        .leftDiv div{
+            padding:5px;
+            padding-left: 10px;
+            border-bottom: 1px solid black;
+            background: #F9FAFC;
+            border-radius: 8px 8px 0 0;
+        }
+        .rightDiv div{
+            padding:5px;
+            padding-left: 10px;
+            border-bottom: 1px solid black;
+            background: #F9FAFC;
+            border-radius: 8px 8px 0 0;
+        }
+        .wrap .btn{
+            float: left;
+            width: 60px;
+            height: 200px;
+            position: relative;
+        }
+        .wrap .btn:hover{
+            cursor: pointer;
+        }
+        .btn div{
+            width: 30px;
+            height: 20px;
+            line-height: 20px;
+            border: 1px solid black;
+            text-align: center;
+            border-radius: 4px;  
+            position: absolute;  
+            left: calc(50% - 15px);       
+        }
+        .btn div:first-of-type{
+            top: 60px;
+        }
+        .btn div:last-of-type{
+            top: 100px;
+        }
+        .active{
+            background: #57A3F3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+            <!-- <Transfer></Transfer> -->
+    </div>
+    <script>
+        Vue.component('Transfer',{
+            props:{
+                users1:{
+                    type:Array,
+                    required:true
+                },
+                users2:{
+                    type:Array,
+                    required:true
+                }
+            },
+            template:`
+            <div class="wrap">
+                <div class="leftDiv">
+                    <div>
+                        <label><input type="checkbox" v-model="selAllLeft"/>全选</label>
+                    </div>
+                    <ul>
+                        <li v-for="item in data1">
+                        <label><input type="checkbox" v-model="item.checked"/> {{item.name}}</label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="btn">
+                    <div :class="checkedLeft?'active':''" @click="click('rigth')">&lt;</div>
+                    <div :class="checkedRight?'active':''" @click="click('left')">&gt;</div>
+                </div>
+                <div class="rightDiv">
+                    <div>
+                        <label><input type="checkbox" v-model="selAllRight"/>全选</label>
+                    </div>
+                    <ul>
+                        <li v-for="item in data2">
+                            <label><input type="checkbox" v-model="item.checked" /> {{item.name}}</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            `,
+            methods:{
+                click(val){
+                    if(val == "left"){
+                            this.selAllLeft = false; 
+                            let arr = this.data1.filter((item) => item.checked)                         
+                            this.data1 = this.data1.filter((item) => !item.checked)  
+                            arr.forEach(item => {
+                                item.checked = !item.checked
+                                this.data2.push(item)
+                            })               
+                    }else{
+                            this.selAllRight = false; 
+                            let arr = this.data2.filter((item) => item.checked)                         
+                            this.data2 = this.data2.filter((item) => !item.checked)  
+                            arr.forEach(item => {
+                                item.checked = !item.checked
+                                this.data1.push(item)
+                            })
+                    } 
+                }
+            },
+            watch:{
+                selAllLeft(val){
+                    this.data1.forEach(item => item.checked = val);
+                    this.checkedRight = val;
+                    // console.log(props:['data1'])
+                },
+                selAllRight(val){
+                    this.data2.forEach(item => item.checked = val);
+                    this.checkedLeft = val;                   
+                },
+                data1:{
+                    handler(val,oldVal){
+                        val.find(item => item.checked)? this.checkedRight = true : this.checkedRight = false
+                    },deep:true
+                },
+                data2:{
+                    handler(val,oldVal){
+                        val.find(item => item.checked)? this.checkedLeft = true : this.checkedLeft = false
+                    },deep:true
+                }
+            },
+            data(){
+                return {
+                    data1:this.users1,
+                    data2:this.users2,
+                    selAllLeft:false,
+                    selAllRight:false,
+                    checkedLeft:false,
+                    checkedRight:false,
+                }
+            }
+        })
+
+        new Vue({
+            el:'#app',
+            template:`
+                <div id="app">
+                    <Transfer 
+                    :users1='[{name:"张三",checked:false},{name:"李四",checked:false},{name:"王五",checked:false},{name:"赵六",checked:false}]'
+                    :users2='[{name:"小明",checked:false},{name:"小红",checked:false},{name:"小白",checked:false},{name:"小黄",checked:false}]' 
+                    />
+                </div>
+            `,
+            data(){
+                return {
+                    selAllLeft:false,
+                    selAllRight:false,
+                    checkedLeft:false,
+                    checkedRight:false,
+                }
+            }
+        })
+    </script>
+
+</body>
+</html>
