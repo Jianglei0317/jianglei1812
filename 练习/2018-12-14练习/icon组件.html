@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>icon组件</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .wrap{
+            display: inline-block;           
+        }
+        .wrap span{
+            display: inline-block;
+            background-repeat: no-repeat;
+            width: 20px;
+            height: 20px;
+            background-size: 100%;
+            border-radius: 20%;
+        }
+        .address{
+            background-image: url(./img/address.png)
+        }
+        .collection{
+            background-image: url(./img/collection.png)
+        }
+        .food{
+            background-image: url(./img/food.png)
+        }
+        .message{
+            background-image: url(./img/message.png)
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        
+    </div>
+    <script>
+        Vue.component('icon',{
+            props:{
+                types:{
+                    type:String,
+                    default:null,
+                    validator(val){
+                        return /(address|collection|food|message)/.test(val)
+                    }
+                },
+                size:{
+                    type:Number
+                },
+                color:{
+                    type:String,
+                    default:"black"
+                }
+            },
+            template:`
+                <div class="wrap">
+                    <span :style="{
+                        backgroundColor:Color,
+                        width:imgSize,
+                        height:imgSize
+                    }" :class="Type"></span>
+                </div>
+            `,
+            data(){
+                return{
+                    Type:this.types,
+                    Size:this.size,
+                    Color:this.color
+                }
+            },
+            computed:{
+                imgSize(){
+                    return (this.Size*10)+"px"
+                }
+            }
+        })
+        new Vue({
+            el:'#app',
+            template:`
+            <div id="app">
+                <icon :types="type" :size="size" :color="color"/>
+                <icon :types="type2" :size="size" :color="color"/>
+                <icon :types="type3" :size="size" :color="color"/>
+                <icon :types="type4" :size="size" :color="color"/>
+            </div>
+            `,
+            data(){
+                return{
+                    //type默认值为 address|collection|food|message
+                    type:"address",                    
+                    size:10,
+                    color:"red",
+
+                    type2:"collection",
+                    type3:"food",
+                    type4:"message"
+
+                }
+            }
+
+        })
+    </script>
+</body>
+</html>

@@ -112,8 +112,8 @@
                     </ul>
                 </div>
                 <div class="btn">
-                    <div :class="checkedLeft?'active':''" @click="click('rigth')">&lt;</div>
-                    <div :class="checkedRight?'active':''" @click="click('left')">&gt;</div>
+                    <div :class="checkedLeft||btnLeft?'active':''" @click="click('left')">&lt;</div>
+                    <div :class="checkedRight||btnRight?'active':''" @click="click('right')">&gt;</div>
                 </div>
                 <div class="rightDiv">
                     <div>
@@ -129,7 +129,7 @@
             `,
             methods:{
                 click(val){
-                    if(val == "left"){
+                    if(val == "right"){
                             this.selAllLeft = false; 
                             let arr = this.data1.filter((item) => item.checked)                         
                             this.data1 = this.data1.filter((item) => !item.checked)  
@@ -157,17 +157,34 @@
                 selAllRight(val){
                     this.data2.forEach(item => item.checked = val);
                     this.checkedLeft = val;                   
-                },
-                data1:{
-                    handler(val,oldVal){
-                        val.find(item => item.checked)? this.checkedRight = true : this.checkedRight = false
-                    },deep:true
-                },
-                data2:{
-                    handler(val,oldVal){
-                        val.find(item => item.checked)? this.checkedLeft = true : this.checkedLeft = false
-                    },deep:true
                 }
+                // 深度监听
+                // data1:{
+                //     handler(val){
+                //         val.find(item => item.checked)? this.checkedRight = true : this.checkedRight = false
+                //     },deep:true
+                // },
+                // data2:{
+                //     handler(val){
+                //         val.find(item => item.checked)? this.checkedLeft = true : this.checkedLeft = false
+                //     },deep:true
+                // }
+            },
+            computed:{
+                btnRight(){
+                   if(this.data1.find(item => item.checked)) {
+                       return true;
+                   }else{
+                       return false;
+                   }
+                },
+                btnLeft(){
+                   if(this.data2.find(item => item.checked)) {
+                       return true;
+                   }else{
+                       return false;
+                   }
+                },
             },
             data(){
                 return {
@@ -190,15 +207,15 @@
                     :users2='[{name:"小明",checked:false},{name:"小红",checked:false},{name:"小白",checked:false},{name:"小黄",checked:false}]' 
                     />
                 </div>
-            `,
-            data(){
-                return {
-                    selAllLeft:false,
-                    selAllRight:false,
-                    checkedLeft:false,
-                    checkedRight:false,
-                }
-            }
+            `
+            // data(){
+            //     return {
+            //         selAllLeft:false,
+            //         selAllRight:false,
+            //         checkedLeft:false,
+            //         checkedRight:false,
+            //     }
+            // }
         })
     </script>
 
