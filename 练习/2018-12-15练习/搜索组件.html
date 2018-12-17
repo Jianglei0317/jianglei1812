@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>搜索功能</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .wrap{
+            text-align: center;
+            width: 300px;
+        }
+
+        .wrap input{
+            width:100%;
+            height: 20px; 
+            text-indent: 10px;         
+        }
+        .wrap ul{
+            width:304px;
+            margin: 0;
+            padding: 0;           
+        }
+        .wrap ul li{
+            text-indent: 10px;
+            list-style: none;
+            text-align: left;
+            /* margin-top: 5px; */
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid gold;
+            color:white;
+            background: lightskyblue;
+        }
+        .wrap ul .active{
+            background: rgb(66, 173, 240); 
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+    </div> 
+    <script>
+        Vue.component('Search',{
+            props:{
+                users:{
+                    type:Array
+                },
+                searchVal:{
+                    type:String
+                }
+            },
+            template:`
+            <div class="wrap" @keydown.down="keyDown('down')" 
+            @keydown.up.prevent="keyDown('up')" @keydown.enter="keyDown('enter')" @keydown.esc="onOFF = !onOFF">
+                    <input type="text" v-model="search" placeholder="请输入搜索内容"/>
+                    <ul v-if="onOFF">
+                        <li v-for="(item,index) in userList" :class="indexNum == index?'active':''"
+                         @mouseover="indexNum = index" @click="Click(index)">{{item}}</li>
+                    </ul>
+            </div>
+            `,
+            data(){
+                return{
+                    indexNum:-1,
+                    onOFF:true,
+                    search:this.searchVal,
+                    user:this.users
+
+                }
+            },
+            computed:{
+                userList(){
+                    return this.user.filter((value, index, arr) => {
+                        return !!~value.indexOf(this.search)
+                    })
+                }
+            },
+            methods:{
+                keyDown(Val){
+                    if(Val == "down"){
+                        this.indexNum == this.userList.length-1? this.indexNum=0:this.indexNum++;
+                    }else if(Val == "up"){
+                        this.indexNum < 1? this.indexNum=this.userList.length-1:this.indexNum--;
+                    }else if(Val == "enter"){
+                        this.indexNum > -1 ?this.search = this.userList[this.indexNum]:this.indexNum;
+                        this.indexNum = -1;                      
+                    }
+                },
+                Click(val){
+                    this.search = this.search+this.userList[val]
+                }
+            },
+            watch:{
+                search(val,oldVal){
+                    if(val != oldVal){
+                        this.$emit('update:searchVal',val)
+                    }
+                }
+            }
+
+        })
+
+        const vm = new Vue({
+            el:'#app', 
+            template:`
+                <div id="app">
+                    <search :users="users" :searchVal.sync="searchVal"/>
+                    {{searchVal}}
+                </div>
+            `,           
+            data:{
+                users:['张三', '李四', '王五','赵六','张飞','李白','王昭君','赵云'],
+                searchVal:'',
+            }          
+        })
+    </script>
+</body>
+</html>

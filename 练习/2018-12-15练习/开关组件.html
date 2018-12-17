@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>开关组件</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+         .Switcher {
+            /* width: 44px;
+            height: 22px; */
+            border-radius: 22px;
+            border: 1px solid #ccc;
+            background: #ccc;
+            transition: background linear .2s;
+        }
+        .Switcher.on {
+            border: 1px solid #2d8cf0;
+            background: #2d8cf0;
+        }
+        .Switcher .btn {
+            /* width: 22px;
+            height: 22px; */
+            background: #fff;
+            border-radius: 100%;
+            transition: transform linear .2s;
+        }
+        .Switcher.on .btn {
+            transform: translateX(22px);
+        }
+        .Switcher.on .small{
+            transform: translateX(18px);
+        }
+        .Switcher.on .large{
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    <script>
+        Vue.component('Swichter',{
+            props:{
+                onOFF:{
+                    type:Boolean,
+                    default:false
+                },
+                size:{
+                    type:String,
+                    default:"default",
+                    validator(val){
+                        return /(large|small|default)/.test(val)
+                    }
+                }
+            },
+            template:`
+                <div 
+                    @click="Click"
+                    :class="['Switcher', {
+                        on: myOnOFF                       
+                    }]"
+                    :style="{
+                        width:(mySize*2)+'px',
+                        height:mySize+'px',                        
+                    }">
+                    <div :class="['btn', {                            
+                            small:smallOnOFF,
+                            large:largeOnOFF                           
+                        }]"
+                    :style="{
+                        width:mySize+'px',
+                        height:mySize+'px',
+                    }">
+                    </div>
+                </div>
+            `,
+            data(){
+                return{
+                    myOnOFF:this.onOFF,                   
+                }
+            },
+            methods:{
+                Click(){
+                    this.myOnOFF = !this.myOnOFF
+                    this.$emit('input',this.myOnOFF)
+                }
+            },
+            computed:{
+                mySize(){
+                    if(this.size == "large"){
+                        return 26
+                    }else if(this.size == "small"){
+                        return 18
+                    }else{
+                        return 22;
+                    }
+                    
+                },
+                largeOnOFF(){
+                    if(this.size == "large"){
+                        return true
+                    }else{
+                        return null;
+                    }
+                },
+                smallOnOFF(){
+                    if(this.size == "small"){
+                        return true
+                    }else{
+                        return null;
+                    }
+                    
+                }
+            }
+        })
+        new Vue({
+            el:'#app',
+            template:`
+                <div id="app">
+                    {{onOFF1}}
+                    <Swichter v-model="onOFF1" :onOFF="onOFF1" :size="size1"/>
+                    {{onOFF2}}
+                    <Swichter v-model="onOFF2" :onOFF="onOFF2" :size="size2"/>
+                    {{onOFF3}}
+                    <Swichter v-model="onOFF3" :onOFF="onOFF3" :size="size3"/>
+                </div>
+            `,
+            data:{
+                onOFF1:true,
+                onOFF2:false,
+                onOFF3:false,
+                //size="large | small | default  默认为default" 
+                size1:"",
+                size2:"large",
+                size3:"small"
+            }
+        })
+    </script>
+</body>
+</html>

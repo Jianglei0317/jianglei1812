@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>分页</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .wrap{
+            height: 40px;
+            margin-bottom: 20px;
+        }
+        .btn{
+            float: left;
+        }
+        .btn:hover{
+            cursor: pointer;
+            background: #eee;
+        }
+        .Previous{
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 6px 0 0 6px;
+            color: #337ab7;
+        }
+        .Next{
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-left: none;
+            border-radius: 0 6px 6px 0;
+            color: #337ab7;  
+        }
+        .wrap ul{
+            margin: 0;
+            padding: 0;
+        }
+        .wrap ul li{
+            float: left;
+            list-style: none;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-left: none;
+            color: #337ab7;
+        }
+        .wrap ul li:hover{
+            cursor: pointer;
+            background: #eee;
+        }
+        .active{
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+    </div>
+    <script>
+        Vue.component('page',{
+            props:{
+                total:{
+                    type:Number,
+                    default:1
+                },
+                current:{
+                    type:Number,
+                    default:1
+                }
+            },
+            template:`
+                <div class="wrap">
+                        <div class="btn Previous" @click="Current--">
+                            <span>«</span>
+                        </div>
+                        <ul>
+                            <li v-for="(item,index) in total" :class="Current == index+1?'active':''" 
+                            @click="Current = index+1">
+                            {{item}}
+                            </li>
+                        </ul>
+                        <div class="btn Next" @click="Current++">
+                            <span>»</span>
+                        </div>                  
+                </div>
+            `,
+            data(){
+                return{
+                    Total:this.total,
+                    Current:this.current,
+
+                }
+            },
+            watch:{
+                Current(val){
+                    if(val > this.Total){
+                        this.Current = 1
+                    }else if(val < 1){
+                        this.Current = this.Total
+                    }
+                    this.$emit('update:current',this.Current)
+                }
+            }
+        })
+        new Vue({
+            el:'#app',
+            template:`
+                <div id="app">
+                    {{current}}
+                    <page :total="total" :current.sync="current" />
+                    {{current2}}
+                    <page :total="total2" :current.sync="current2" />
+                    {{current3}}
+                    <page :total="total3" :current.sync="current3" />
+                </div>
+            `,
+            data:{
+                // <Page :total="100" :current.sync="a"  />
+                total:5,
+                current:1,
+                total2:10,
+                current2:3,
+                total3:15,
+                current3:5,
+            }
+        })
+    </script>
+</body>
+</html>
