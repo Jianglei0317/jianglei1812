@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>导航菜单</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .Menu{
+            width: 250px;
+            border-right: 1px solid #ddd;
+        }
+        .Menu ul{
+            margin: 0;
+            padding: 0;
+        }
+        .Menu ul li{
+            list-style: none;
+        }
+        .Menu ul li>span{
+            display: inline-block;
+            height: 50px;
+            line-height: 50px;
+            margin-left: 20px;
+        }
+        .Menu ul li .icon{
+            float: right;
+            margin-right: 20px;
+        }
+        .Menu ul li .icon::after{
+            content: "⇓"
+        }
+        .Menu ul li .on::after{
+            content: "⇑"
+        }      
+        .Menu ul li:hover{
+            cursor: pointer;
+        }
+        .Menu ul li:hover span{
+            color: #19be6b
+        }
+        .Menu ul li .item{
+            height: 50px;
+            line-height: 50px;
+            text-indent: 40px;
+        }
+        .Menu ul li .item:hover{
+            color:#2d8cf0;
+            background: #f0faff;
+            border-right: 2px solid #2d8cf0;
+        }
+        .Menu ul li .active{
+            color:#2d8cf0;
+            background: #f0faff;
+            border-right: 2px solid #2d8cf0;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app">
+
+    </div>  
+    <script>
+        Vue.component('Menu',{
+            props:{
+                data:Array,
+                keyWord:String
+            },
+            template:`
+                <div class="Menu">
+                    <ul>
+                        <li v-for="(item,index) in data" @click="item.checked = !item.checked">
+                            <span>{{item.title}}</span>
+                            <span :class="['icon',{ on:item.checked }]"></span>
+                            <ul v-if="item.checked">
+                                <li v-for="(items,indexs) in item.list" :class="['item',{
+                                    'active':myKeyWord == items
+                                }]" @click.stop="myKeyWord = items" >
+                                    {{items}}
+                                </li>
+                            </ul>
+                        </li>                      
+                    </ul> 
+                </div>
+            `,
+            data(){
+                return{
+                    myData:this.data,
+                    myKeyWord:this.keyWord,
+
+
+                }
+            },
+            watch:{
+                myKeyWord(val){
+                    this.$emit('update:keyWord',val)
+                }
+            }
+        })
+        new Vue({
+            el:'#app',
+            template:`
+                <div id="app">
+                    <Menu :data="data" :keyWord.sync="keyWord"/>
+                </div>
+            `,
+            data:{
+                data:[
+                    {title:'内容管理',list:['文章管理','评论管理','举报管理'],checked:false},
+                    {title:'用户管理',list:['新增用户','活跃用户'],checked:false},
+                    {title:'统计分析',list:['活跃分析','时段分析','用户留存','流失用户'],checked:false}
+                ],
+                keyWord:""
+            }
+        })
+    </script> 
+</body>
+</html>
