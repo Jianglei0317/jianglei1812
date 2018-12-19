@@ -63,7 +63,9 @@
 
         .Menu{
             width: 250px;
+            height: 870px;
             border-right: 1px solid #ddd;
+            overflow: auto;
         }
         .Menu ul{
             margin: 0;
@@ -165,7 +167,7 @@
             template:`
                 <div class="Drawer" :style="{left:myLeft,width:myWidth,right:myRight}">
                     <header>
-                        <h3>抽屉</h3>
+                        <h3>菜单</h3>
                     </header>
                     <div :class="['btn',{on:open}]" @click="open = !open" 
                     :style="direction?{left:btnDirection}:{right:btnDirection}">open</div>
@@ -219,11 +221,11 @@
             el:'#app',
             template:`
                 <div id="app">
-                    <Drawer  :width="width"/>
+                    <Drawer :direction="direction" :width.number="width"/>
                 </div>
             `,
             data:{
-                // direction:false, //可选值 true(左边打开)||false(右边打开) 默认true
+                direction:true, //可选值 true(左边打开)||false(右边打开) 默认true
                 width:250
 
             }
