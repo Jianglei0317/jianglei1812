@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>slider</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .slider{
+            margin: 100px auto;
+            width: 600px;
+            height: 4px;
+            background: #e8eaec;
+            border-radius: 2px;
+            position: relative;
+        }
+        .slider .bgDiv{
+            height: 100%;
+            /* width: 10%; */
+            background: #57a3f3;
+            border-radius: 2px 0 0 2px;
+        }
+        .slider .btn{
+            cursor: pointer;
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #57a3f3;
+            background: white;
+            border-radius: 50%;
+            /* left: 300px; */
+            top: -5px;
+        }
+        .slider .tips{
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            width: 35px;
+            height: 30px;
+            line-height: 30px;
+            top: -40px;
+            left: -13px;
+            border-radius: 6px;
+            background: #585E6B;
+            color: white;
+        }
+        .slider .tips::after{
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 5px solid transparent;
+            border-top-color: #585E6B;
+            bottom:-10px;
+            left: 14px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    <script>
+        Vue.component('slider',{
+            props:{},
+            mounted() {
+                const btn = this.$refs['btn']
+                const slider = this.$refs['slider']
+
+                btn.addEventListener("mousedown",() => {
+                    this.tipsOnOFF = true;
+                    btn.style.cssText = 'width:14px;height:14px;top:-7px;left:'+this.myLeft;
+                    document.addEventListener("mousemove",move)
+                    
+                })
+                const move = (e) => {   
+                    e.preventDefault && e.preventDefault() //去掉默认拖拽事件               
+                    let left = slider.offsetLeft,width = slider.offsetWidth
+                    this.Width = parseInt((e.clientX - left)/width * 100)
+                    this.Left = e.clientX - left
+                    document.addEventListener("mouseup",()=>{
+                        this.tipsOnOFF = false;
+                        document.removeEventListener('mousemove', move)
+                        btn.style.cssText = 'width:10px;height:10px;top:-5px;left:'+this.myLeft;
+                    })
+                }
+            },
+            template:`
+                <div class="slider" ref="slider">
+                    <div class="bgDiv" :style="{width:myWidth}"></div>
+                    <span class="btn" ref="btn" :style="{left:myLeft}">
+                        <span class="tips" v-if="tipsOnOFF">{{WidthVal}}</span>    
+                    </span>                   
+                </div>
+
+            `,
+            data(){
+                return{
+                    Width:0,
+                    tipsOnOFF:false
+                }
+            },
+            computed:{
+                WidthVal(){
+                    if(this.Width<0){
+                        return 0
+                    }else if(this.Width>100){
+                        return 100
+                    }else{
+                        return this.Width
+                    }
+                },
+                myWidth(){
+                    return this.WidthVal+"%"
+                    
+                },
+                myLeft(){
+                    return this.WidthVal*6 +"px"
+                }
+            }
+        })
+        new Vue({
+            el:'#app',
+            template:`
+                <div id="app">
+                    <slider />
+                </div>
+            `,
+            data:{
+
+            }
+        })
+
+    </script>
+</body>
+</html>

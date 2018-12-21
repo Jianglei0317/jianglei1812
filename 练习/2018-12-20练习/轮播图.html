@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>轮播图</title>
+    <link rel="stylesheet" href="./animate.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        body{
+            -moz-user-select:none;/*火狐*/
+            -webkit-user-select:none;/*webkit浏览器*/
+            -ms-user-select:none;/*IE10*/
+            -khtml-user-select:none;/*早期浏览器*/
+            user-select:none;
+            
+        }
+        .Banner{
+            width: 830px;
+            height: 482px;
+            position: relative;
+            margin: 20px auto;
+        }
+        .Banner ul{
+            margin: 0;
+            padding: 0;
+        }
+        .Banner ul li{
+            list-style: none;
+            position: absolute;
+        }
+        .Banner .btn{
+            position: absolute;
+            z-index: 1;
+            width: 50px;
+            height: 50px;
+            line-height: 45px;
+            text-align: center;
+            font-size: 40px;
+            background: black;
+            color: white;
+            opacity: .5;
+            border-radius:  25px;  
+        }
+        .btn:hover{
+            opacity: .7;
+            cursor: pointer;
+        }
+        .Banner .btn:first-of-type{
+            top: calc(50% - 25px);
+            left: 10px;
+        }
+        .Banner .btn:last-of-type{
+            top: calc(50% - 25px);
+            right: 10px;           
+        }
+        .Banner .listBtn{
+            width: 300px;
+            height: 30px;
+            position: absolute;
+            z-index: 1;
+            bottom: 30px;
+            left: calc(50% - 150px);
+            background: black;
+            opacity: .7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 15px;
+        }
+        .Banner .listBtn span{
+            margin: 10px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+        }
+        .Banner .listBtn .active{
+            background: red;
+            
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    <script>
+        Vue.component('Banner',{
+            props:{
+                srcList:Array
+            },
+            mounted(){ 
+                this.leave = "animated zoomOut";
+                this.Timer = setInterval(() => {
+                    this.indexNum++
+                },3000) 
+            },
+            template:`
+                <div class="Banner" @mouseover="Over" @mouseout="Out">
+                    <div class="btn" @click="prev" v-show="!autoPlay">&lt;</div>
+                    <ul>
+                        <transition-group enter-active-class="animated zoomIn" 
+                        :leave-active-class="leave"  @after-enter="playing = false">
+                            <li v-for="(item,index) in srcList" v-if="indexNum === index"
+                            :key="item"><img :src="item"/></li>                           
+                        </transition-group>
+                        <li class="listBtn">
+                                <span v-for="(item,index) in srcList" :class="{active:indexNum === index}"
+                                 @click="Click(index)"></span>
+                        </li>
+                    </ul>
+                    <div class="btn" @click="next" v-show="!autoPlay">&gt;</div>
+                </div>
+            `,
+            data(){
+                return{
+                    indexNum:0,
+                    leave:null,
+                    playing:false,
+                    autoPlay:true,
+                    Timer:null,                   
+                }
+            },
+            watch:{
+                indexNum(val){
+                    if(this.indexNum > this.srcList.length-1){
+                        this.indexNum = 0
+                    }else if(this.indexNum < 0){
+                        this.indexNum = this.srcList.length-1
+                    }
+                }
+
+            },
+            methods:{
+                prev(){
+                    if (this.playing) return;
+                    // 上锁
+                    this.playing = true
+                    this.indexNum--
+                    this.leave = 'animated zoomOutLeft';
+                    // this.autoPlay = false
+                },
+                next(){
+                    if (this.playing) return;
+                    // 上锁
+                    this.playing = true
+                    this.indexNum++
+                    this.leave = 'animated zoomOutRight';
+                    // this.autoPlay = false
+                },
+                Click(val){
+                    if(val == this.indexNum) return
+                    if (this.playing) return;
+                    this.playing = true
+                    this.indexNum = val;
+                    this.leave = 'animated zoomOutDown';
+                },
+                Over(){
+                    this.autoPlay = false;
+                    clearInterval(this.Timer);
+                },
+                Out(){
+                    this.autoPlay = true;
+                    this.leave = "animated zoomOut";
+                    this.Timer = setInterval(() => {
+                        this.indexNum++
+                    },3000)
+                }
+            }
+        })
+        new Vue({
+            el:'#app',
+            template:`
+                <div id="app">
+                    <Banner :srcList="srcList"/>
+                </div>
+            `,
+            data:{
+                srcList:["./img/10.jpg","./img/11.jpg","./img/12.jpg",
+                "./img/13.jpg","./img/14.jpg","./img/15.jpg"]
+            }
+        })
+
+    </script>
+</body>
+</html>
